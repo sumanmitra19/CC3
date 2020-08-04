@@ -2,6 +2,7 @@ package Test_package;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -25,12 +26,15 @@ public static File filePath = null;
 static XSSFWorkbook wb;
 static XSSFSheet sheet;
 
-public static String getExcelPath(String firstSheetName)
+public static String getExcelPath(String firstSheetName) throws Exception
 
 {
 
 //get the file path of the excel sheet, store it in the variable 'filePath' and return it
 	filePath = new File("./AddressBook.xlsx");
+	FileInputStream fis = new FileInputStream(filePath);
+	wb = new XSSFWorkbook(fis);
+	sheet = wb.getSheet(firstSheetName);
 
 }
 
@@ -40,17 +44,19 @@ public static Object[][] readExcelData(String firstSheetName) throws Exception
 
 //read the data from excel sheet and store it in 2-D array. Return the array
 
-	FileInputStream fis = new FileInputStream(filePath);
-	wb = new XSSFWorkbook(fis);
-	int row = wb.getSheetAt(sheetIndex).getLastRowNum();
+
+	int row = sheet.getLastRowNum();
 	row = row+1;
-	return row;
-	int rowNumb = config.rowCount(0);
-	Object[][] data = new Object[rowNumb][2];
-	for(int i = 0; i<rowNumb; i++)
+
+	Object[][] data = new Object[row][5];
+	for(int i = 0; i<row; i++)
 	{
-		data[i][0] = config.getData(0, i, 0);
-		data[i][1] = config.getData(0, i, 1);
+		data[i][0] = sheet.getRow(i).getCell(0).getStringCellValue();
+		data[i][1] = sheet.getRow(i).getCell(1).getStringCellValue();
+		data[i][2] = sheet.getRow(i).getCell(2).getStringCellValue();
+		data[i][3] = sheet.getRow(i).getCell(3).getStringCellValue();
+		data[i][4] = sheet.getRow(i).getCell(4).getStringCellValue();
+		data[i][5] = sheet.getRow(i).getCell(5).getStringCellValue();
 	}
 	
 	return data;
